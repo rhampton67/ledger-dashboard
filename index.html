@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ledger / Family Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg:       #0f1117;
+    --surface:  #181c27;
+    --border:   #252b3b;
+    --text:     #e8eaf0;
+    --muted:    #6b7280;
+    --accent:   #4f8ef7;
+    --green:    #34d399;
+    --red:      #f87171;
+    --gold:     #fbbf24;
+    --purple:   #a78bfa;
+    --mono:     'IBM Plex Mono', monospace;
+    --sans:     'Inter', sans-serif;
+  }
+
+  body { background: var(--bg); color: var(--text); font-family: var(--sans); min-height: 100vh; }
+
+  /* ── Header ── */
+  header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 16px 32px; border-bottom: 1px solid var(--border);
+    gap: 16px; flex-wrap: wrap;
+  }
+  .logo { font-family: var(--mono); font-size: 13px; font-weight: 600; letter-spacing: .12em; color: var(--accent); text-transform: uppercase; white-space: nowrap; }
+  .logo span { color: var(--muted); }
+
+  /* Profile tabs */
+  .profile-tabs { display: flex; gap: 6px; }
+  .profile-tab {
+    font-family: var(--mono); font-size: 11px; letter-spacing: .08em;
+    padding: 6px 16px; border-radius: 20px; border: 1px solid var(--border);
+    background: transparent; color: var(--muted); cursor: pointer;
+    transition: all .15s; white-space: nowrap;
+  }
+  .profile-tab:hover { border-color: var(--accent); color: var(--accent); }
+  .profile-tab.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .profile-tab.active.parents { background: var(--purple); border-color: var(--purple); }
+
+  #env-badge {
+    font-family: var(--mono); font-size: 11px; padding: 4px 10px;
+    border-radius: 20px; border: 1px solid var(--border);
+    color: var(--muted); background: var(--surface); white-space: nowrap;
+  }
+
+  /* ── Main ── */
+  main { max-width: 1100px; margin: 0 auto; padding: 40px 32px; }
+
+  /* ── Profile header ── */
+  .profile-header {
+    display: flex; align-items: flex-end; justify-content: space-between;
+    margin-bottom: 36px; gap: 16px; flex-wrap: wrap;
+  }
+  .profile-title { font-size: 22px; font-weight: 300; letter-spacing: -.01em; }
+  .profile-title strong { font-weight: 600; }
+  .profile-title.parents strong { color: var(--purple); }
+  .profile-title.mine strong { color: var(--accent); }
+
+  .btn-add {
+    display: flex; align-items: center; gap: 8px;
+    background: transparent; border: 1px solid var(--border);
+    color: var(--muted); padding: 8px 16px; border-radius: 8px;
+    font-family: var(--sans); font-size: 13px; cursor: pointer; transition: all .15s;
+  }
+  .btn-add:hover { border-color: var(--accent); color: var(--accent); }
+  .btn-add:disabled { opacity: .4; cursor: not-allowed; }
+  .btn-add .plus { font-size: 18px; line-height: 1; }
+
+  /* ── Empty state ── */
+  .empty-state {
+    display: flex; flex-direction: column; align-items: center;
+    justify-content: center; min-height: 40vh; text-align: center; gap: 16px;
+  }
+  .empty-icon { font-size: 40px; opacity: .3; }
+  .empty-state h2 { font-size: 18px; font-weight: 400; color: var(--muted); }
+  .empty-state p { font-size: 13px; color: var(--muted); max-width: 320px; line-height: 1.6; }
+
+  .btn-primary {
+    background: var(--accent); color: #fff; border: none;
+    padding: 11px 24px; border-radius: 8px; font-family: var(--sans);
+    font-size: 14px; font-weight: 500; cursor: pointer; transition: opacity .15s;
+  }
+  .btn-primary:hover { opacity: .85; }
+  .btn-primary:disabled { opacity: .4; cursor: not-allowed; }
+  .btn-primary.purple { background: var(--purple); }
+
+  .sandbox-note {
+    font-family: var(--mono); font-size: 11px; color: var(--muted);
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 6px; padding: 10px 16px; line-height: 1.7;
+  }
+
+  /* ── Net worth ── */
+  .net-worth-block {
+    margin-bottom: 40px; padding-bottom: 36px; border-bottom: 1px solid var(--border);
+    display: flex; align-items: flex-end; gap: 40px; flex-wrap: wrap;
+  }
+  .nw-main { }
+  .nw-label { font-family: var(--mono); font-size: 10px; letter-spacing: .15em; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; }
+  .nw-value { font-family: var(--mono); font-size: 48px; font-weight: 600; letter-spacing: -.02em; line-height: 1; }
+  .nw-sub { font-size: 12px; color: var(--muted); margin-top: 8px; }
+
+  /* ── Type summary cards ── */
+  .type-summary { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 12px; margin-bottom: 40px; }
+  .type-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 18px; }
+  .type-name { font-family: var(--mono); font-size: 10px; text-transform: uppercase; letter-spacing: .1em; color: var(--muted); margin-bottom: 8px; }
+  .type-amount { font-family: var(--mono); font-size: 20px; font-weight: 600; }
+  .type-count { font-size: 12px; color: var(--muted); margin-top: 4px; }
+
+  /* ── Institution groups ── */
+  .institution-group { margin-bottom: 28px; }
+  .institution-header {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 8px; padding: 0 4px;
+  }
+  .institution-name { font-size: 12px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .08em; font-family: var(--mono); }
+  .remove-institution {
+    font-family: var(--mono); font-size: 10px; color: var(--muted);
+    background: transparent; border: none; cursor: pointer; padding: 2px 6px;
+    border-radius: 4px; transition: color .15s;
+  }
+  .remove-institution:hover { color: var(--red); }
+
+  .account-row {
+    display: grid; grid-template-columns: 1fr auto auto;
+    align-items: center; gap: 16px; padding: 16px 20px;
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 10px; margin-bottom: 6px; transition: border-color .15s;
+  }
+  .account-row:hover { border-color: rgba(79,142,247,.4); }
+  .account-name { font-weight: 500; font-size: 14px; }
+  .account-meta { font-size: 12px; color: var(--muted); margin-top: 3px; font-family: var(--mono); }
+  .account-mask { font-family: var(--mono); font-size: 12px; color: var(--muted); }
+  .account-balance { font-family: var(--mono); font-size: 15px; font-weight: 600; text-align: right; }
+  .account-avail { font-family: var(--mono); font-size: 11px; color: var(--muted); text-align: right; margin-top: 3px; }
+
+  .pill { display: inline-block; font-family: var(--mono); font-size: 10px; letter-spacing: .06em; padding: 2px 7px; border-radius: 4px; text-transform: uppercase; font-weight: 500; }
+  .pill-depository { background: rgba(79,142,247,.12); color: var(--accent); }
+  .pill-credit      { background: rgba(251,191,36,.10); color: var(--gold); }
+  .pill-investment  { background: rgba(52,211,153,.10); color: var(--green); }
+  .pill-loan        { background: rgba(248,113,113,.10); color: var(--red); }
+  .pill-other       { background: rgba(107,114,128,.10); color: var(--muted); }
+
+  /* ── Spinner ── */
+  .spinner { width: 16px; height: 16px; border: 2px solid var(--border); border-top-color: var(--accent); border-radius: 50%; animation: spin .7s linear infinite; display: inline-block; vertical-align: middle; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* ── Toast ── */
+  #toast {
+    position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
+    background: var(--surface); border: 1px solid var(--border);
+    color: var(--text); padding: 10px 20px; border-radius: 8px;
+    font-size: 13px; font-family: var(--mono); opacity: 0;
+    transition: opacity .3s; pointer-events: none; white-space: nowrap; z-index: 100;
+  }
+  #toast.show { opacity: 1; }
+  #toast.error { border-color: var(--red); color: var(--red); }
+
+  /* ── Section label ── */
+  .section-label { font-family: var(--mono); font-size: 10px; letter-spacing: .15em; text-transform: uppercase; color: var(--muted); margin-bottom: 14px; }
+
+  @media (max-width: 600px) {
+    header { padding: 14px 16px; }
+    main { padding: 24px 16px; }
+    .nw-value { font-size: 36px; }
+    .account-row { grid-template-columns: 1fr auto; }
+    .account-mask { display: none; }
+    .net-worth-block { gap: 20px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">Ledger <span>/ Family</span></div>
+  <div class="profile-tabs">
+    <button class="profile-tab active" id="tab-mine" onclick="switchProfile('mine')">My Accounts</button>
+    <button class="profile-tab" id="tab-parents" onclick="switchProfile('parents')">Parents</button>
+  </div>
+  <div id="env-badge">sandbox</div>
+</header>
+
+<main id="main-content"></main>
+
+<div id="toast"></div>
+
+<script src="https://cdn.plaid.com/link/v2/stable/link-initialize.js"></script>
+<script>
+// ── Config ────────────────────────────────────────────────────────────────
+const CLIENT_ID = '6a32b010fcc30d000d65f4bd';
+const SECRET    = '06045dfd60dbf3c9b53a2f363752e3';
+const PLAID_ENV = 'sandbox';
+const BASE_URL  = `https://${PLAID_ENV}.plaid.com`;
+
+// ── State: two profiles, each with an array of {accessToken, institutionName, accounts[]} ──
+const STATE = {
+  mine:    { label: 'My Accounts',  userId: 'robert-001', items: [] },
+  parents: { label: 'Mom & Dad',    userId: 'parents-001', items: [] },
+};
+let activeProfile = 'mine';
+
+// ── Plaid API ─────────────────────────────────────────────────────────────
+async function plaidPost(endpoint, body) {
+  const res = await fetch(BASE_URL + endpoint, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ client_id: CLIENT_ID, secret: SECRET, ...body })
+  });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.error_message || data.display_message || `Plaid error ${res.status}`);
+  return data;
+}
+
+// ── Profile switching ─────────────────────────────────────────────────────
+function switchProfile(profile) {
+  activeProfile = profile;
+  document.getElementById('tab-mine').className    = 'profile-tab' + (profile === 'mine'    ? ' active' : '');
+  document.getElementById('tab-parents').className = 'profile-tab' + (profile === 'parents' ? ' active parents' : '');
+  renderMain();
+}
+
+// ── Link: add an institution to active profile ────────────────────────────
+async function addInstitution() {
+  const btn = document.getElementById('add-btn');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span> Connecting…';
+
+  const profile = STATE[activeProfile];
+  let linkToken;
+  try {
+    const data = await plaidPost('/link/token/create', {
+      user: { client_user_id: profile.userId },
+      client_name: 'Ledger Dashboard',
+      products: ['transactions'],
+      country_codes: ['US'],
+      language: 'en'
+    });
+    linkToken = data.link_token;
+  } catch (e) {
+    toast('Could not start Link: ' + e.message, true);
+    resetAddBtn();
+    return;
+  }
+
+  const handler = Plaid.create({
+    token: linkToken,
+    onSuccess: async (publicToken, metadata) => {
+      btn.innerHTML = '<span class="spinner"></span> Linking…';
+      try {
+        const ex = await plaidPost('/item/public_token/exchange', { public_token: publicToken });
+        const balData = await plaidPost('/accounts/balance/get', { access_token: ex.access_token });
+        const institutionName = metadata.institution?.name || 'Institution';
+        STATE[activeProfile].items.push({
+          accessToken: ex.access_token,
+          institutionName,
+          accounts: balData.accounts
+        });
+        renderMain();
+        toast(`${institutionName} connected`);
+      } catch (e) {
+        toast('Link error: ' + e.message, true);
+        resetAddBtn();
+      }
+    },
+    onExit: (err) => {
+      resetAddBtn();
+      if (err) toast(err.display_message || err.error_message || 'Link closed', true);
+    }
+  });
+  handler.open();
+}
+
+function resetAddBtn() {
+  const btn = document.getElementById('add-btn');
+  if (!btn) return;
+  btn.disabled = false;
+  btn.innerHTML = '<span class="plus">+</span> Add Institution';
+}
+
+// ── Remove an institution ─────────────────────────────────────────────────
+function removeInstitution(idx) {
+  const item = STATE[activeProfile].items[idx];
+  if (!confirm(`Remove ${item.institutionName}? This cannot be undone (the Item slot stays used on your Trial plan).`)) return;
+  STATE[activeProfile].items.splice(idx, 1);
+  renderMain();
+  toast(`${item.institutionName} removed`);
+}
+
+// ── Refresh balances for all items in active profile ──────────────────────
+async function refreshAll() {
+  const items = STATE[activeProfile].items;
+  if (!items.length) return;
+  toast('Refreshing balances…');
+  await Promise.all(items.map(async (item, i) => {
+    const data = await plaidPost('/accounts/balance/get', { access_token: item.accessToken });
+    STATE[activeProfile].items[i].accounts = data.accounts;
+  }));
+  renderMain();
+  toast('Balances updated');
+}
+
+// ── Render ────────────────────────────────────────────────────────────────
+function fmt(n, currency = 'USD') {
+  if (n == null) return '—';
+  return new Intl.NumberFormat('en-US', { style: 'currency', currency, minimumFractionDigits: 2 }).format(n);
+}
+function pillClass(type) {
+  return { depository: 'pill-depository', credit: 'pill-credit', investment: 'pill-investment', loan: 'pill-loan' }[type] || 'pill-other';
+}
+const TYPE_LABELS = { depository: 'Cash & Checking', investment: 'Investments', credit: 'Credit Cards', loan: 'Loans', other: 'Other' };
+const TYPE_ORDER  = ['depository', 'investment', 'credit', 'loan', 'other'];
+
+function renderMain() {
+  const profile = STATE[activeProfile];
+  const isParents = activeProfile === 'parents';
+  const accentColor = isParents ? 'var(--purple)' : 'var(--accent)';
+  const main = document.getElementById('main-content');
+
+  if (profile.items.length === 0) {
+    main.innerHTML = `
+      <div class="profile-header">
+        <div class="profile-title ${activeProfile}">
+          <strong>${profile.label}</strong>
+        </div>
+      </div>
+      <div class="empty-state">
+        <div class="empty-icon">🏦</div>
+        <h2>No accounts connected yet</h2>
+        <p>Connect a bank or investment institution to start tracking ${isParents ? "your parents'" : 'your'} balances.</p>
+        <div class="sandbox-note">Sandbox credentials &nbsp;·&nbsp; Username: <strong>user_good</strong> &nbsp;·&nbsp; Password: <strong>pass_good</strong></div>
+        <button class="btn-primary ${isParents ? 'purple' : ''}" id="add-btn" onclick="addInstitution()">
+          + Connect Institution
+        </button>
+      </div>`;
+    return;
+  }
+
+  // Aggregate totals
+  let netTotal = 0;
+  const typeTotals = {};
+  let totalAccounts = 0;
+
+  profile.items.forEach(item => {
+    item.accounts.forEach(a => {
+      const bal = a.balances.current ?? 0;
+      const type = a.type;
+      totalAccounts++;
+      if (type === 'credit' || type === 'loan') netTotal -= bal;
+      else netTotal += bal;
+      typeTotals[type] = typeTotals[type] || { amount: 0, count: 0 };
+      typeTotals[type].count++;
+      typeTotals[type].amount += bal;
+    });
+  });
+
+  // Type summary HTML
+  let typeSummaryHTML = '';
+  TYPE_ORDER.forEach(type => {
+    if (!typeTotals[type]) return;
+    const d = typeTotals[type];
+    typeSummaryHTML += `
+      <div class="type-card">
+        <div class="type-name">${TYPE_LABELS[type] || type}</div>
+        <div class="type-amount">${fmt(d.amount)}</div>
+        <div class="type-count">${d.count} account${d.count !== 1 ? 's' : ''}</div>
+      </div>`;
+  });
+
+  // Institution groups HTML
+  let institutionsHTML = '';
+  profile.items.forEach((item, idx) => {
+    let rowsHTML = '';
+    item.accounts.forEach(a => {
+      const cur = a.balances.current;
+      const avail = a.balances.available;
+      rowsHTML += `
+        <div class="account-row">
+          <div>
+            <div class="account-name">${a.name}</div>
+            <div class="account-meta">
+              <span class="pill ${pillClass(a.type)}">${a.type}</span>
+              &nbsp;${a.subtype || ''}
+            </div>
+          </div>
+          <div class="account-mask">····${a.mask || '????'}</div>
+          <div>
+            <div class="account-balance">${fmt(cur, a.balances.iso_currency_code || 'USD')}</div>
+            ${avail != null ? `<div class="account-avail">${fmt(avail)} avail.</div>` : ''}
+          </div>
+        </div>`;
+    });
+    institutionsHTML += `
+      <div class="institution-group">
+        <div class="institution-header">
+          <div class="institution-name">${item.institutionName}</div>
+          <button class="remove-institution" onclick="removeInstitution(${idx})">remove ×</button>
+        </div>
+        ${rowsHTML}
+      </div>`;
+  });
+
+  const itemCount = profile.items.length;
+  main.innerHTML = `
+    <div class="profile-header">
+      <div class="profile-title ${activeProfile}">
+        <strong>${profile.label}</strong>
+        <span style="color:var(--muted);font-size:14px;margin-left:10px">${itemCount} institution${itemCount !== 1 ? 's' : ''} · ${totalAccounts} account${totalAccounts !== 1 ? 's' : ''}</span>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center">
+        <button class="btn-add" onclick="refreshAll()" title="Refresh balances">↻ Refresh</button>
+        <button class="btn-add" id="add-btn" onclick="addInstitution()">
+          <span class="plus">+</span> Add Institution
+        </button>
+      </div>
+    </div>
+
+    <div class="net-worth-block">
+      <div class="nw-main">
+        <div class="nw-label">Net Balance</div>
+        <div class="nw-value" style="color:${accentColor}">${fmt(netTotal)}</div>
+        <div class="nw-sub">Assets minus credit & loan balances</div>
+      </div>
+    </div>
+
+    <div class="type-summary">${typeSummaryHTML}</div>
+
+    <div class="section-label">All Accounts</div>
+    ${institutionsHTML}`;
+}
+
+// ── Toast ─────────────────────────────────────────────────────────────────
+let toastTimer;
+function toast(msg, isError = false) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.className = 'show' + (isError ? ' error' : '');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => { el.className = ''; }, 3000);
+}
+
+// ── Init ──────────────────────────────────────────────────────────────────
+renderMain();
+</script>
+</body>
+</html>
