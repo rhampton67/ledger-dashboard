@@ -25,7 +25,6 @@
 
   body { background: var(--bg); color: var(--text); font-family: var(--sans); min-height: 100vh; }
 
-  /* ── Header ── */
   header {
     display: flex; align-items: center; justify-content: space-between;
     padding: 16px 32px; border-bottom: 1px solid var(--border);
@@ -34,13 +33,11 @@
   .logo { font-family: var(--mono); font-size: 13px; font-weight: 600; letter-spacing: .12em; color: var(--accent); text-transform: uppercase; white-space: nowrap; }
   .logo span { color: var(--muted); }
 
-  /* Profile tabs */
   .profile-tabs { display: flex; gap: 6px; }
   .profile-tab {
     font-family: var(--mono); font-size: 11px; letter-spacing: .08em;
     padding: 6px 16px; border-radius: 20px; border: 1px solid var(--border);
-    background: transparent; color: var(--muted); cursor: pointer;
-    transition: all .15s; white-space: nowrap;
+    background: transparent; color: var(--muted); cursor: pointer; transition: all .15s;
   }
   .profile-tab:hover { border-color: var(--accent); color: var(--accent); }
   .profile-tab.active { background: var(--accent); border-color: var(--accent); color: #fff; }
@@ -49,13 +46,11 @@
   #env-badge {
     font-family: var(--mono); font-size: 11px; padding: 4px 10px;
     border-radius: 20px; border: 1px solid var(--border);
-    color: var(--muted); background: var(--surface); white-space: nowrap;
+    color: var(--muted); background: var(--surface);
   }
 
-  /* ── Main ── */
   main { max-width: 1100px; margin: 0 auto; padding: 40px 32px; }
 
-  /* ── Profile header ── */
   .profile-header {
     display: flex; align-items: flex-end; justify-content: space-between;
     margin-bottom: 36px; gap: 16px; flex-wrap: wrap;
@@ -75,7 +70,6 @@
   .btn-add:disabled { opacity: .4; cursor: not-allowed; }
   .btn-add .plus { font-size: 18px; line-height: 1; }
 
-  /* ── Empty state ── */
   .empty-state {
     display: flex; flex-direction: column; align-items: center;
     justify-content: center; min-height: 40vh; text-align: center; gap: 16px;
@@ -99,35 +93,23 @@
     border-radius: 6px; padding: 10px 16px; line-height: 1.7;
   }
 
-  /* ── Net worth ── */
   .net-worth-block {
     margin-bottom: 40px; padding-bottom: 36px; border-bottom: 1px solid var(--border);
-    display: flex; align-items: flex-end; gap: 40px; flex-wrap: wrap;
   }
-  .nw-main { }
   .nw-label { font-family: var(--mono); font-size: 10px; letter-spacing: .15em; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; }
   .nw-value { font-family: var(--mono); font-size: 48px; font-weight: 600; letter-spacing: -.02em; line-height: 1; }
   .nw-sub { font-size: 12px; color: var(--muted); margin-top: 8px; }
 
-  /* ── Type summary cards ── */
   .type-summary { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 12px; margin-bottom: 40px; }
   .type-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 18px; }
   .type-name { font-family: var(--mono); font-size: 10px; text-transform: uppercase; letter-spacing: .1em; color: var(--muted); margin-bottom: 8px; }
   .type-amount { font-family: var(--mono); font-size: 20px; font-weight: 600; }
   .type-count { font-size: 12px; color: var(--muted); margin-top: 4px; }
 
-  /* ── Institution groups ── */
   .institution-group { margin-bottom: 28px; }
-  .institution-header {
-    display: flex; align-items: center; justify-content: space-between;
-    margin-bottom: 8px; padding: 0 4px;
-  }
+  .institution-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; padding: 0 4px; }
   .institution-name { font-size: 12px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .08em; font-family: var(--mono); }
-  .remove-institution {
-    font-family: var(--mono); font-size: 10px; color: var(--muted);
-    background: transparent; border: none; cursor: pointer; padding: 2px 6px;
-    border-radius: 4px; transition: color .15s;
-  }
+  .remove-institution { font-family: var(--mono); font-size: 10px; color: var(--muted); background: transparent; border: none; cursor: pointer; padding: 2px 6px; border-radius: 4px; transition: color .15s; }
   .remove-institution:hover { color: var(--red); }
 
   .account-row {
@@ -150,11 +132,9 @@
   .pill-loan        { background: rgba(248,113,113,.10); color: var(--red); }
   .pill-other       { background: rgba(107,114,128,.10); color: var(--muted); }
 
-  /* ── Spinner ── */
   .spinner { width: 16px; height: 16px; border: 2px solid var(--border); border-top-color: var(--accent); border-radius: 50%; animation: spin .7s linear infinite; display: inline-block; vertical-align: middle; }
   @keyframes spin { to { transform: rotate(360deg); } }
 
-  /* ── Toast ── */
   #toast {
     position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
     background: var(--surface); border: 1px solid var(--border);
@@ -165,7 +145,6 @@
   #toast.show { opacity: 1; }
   #toast.error { border-color: var(--red); color: var(--red); }
 
-  /* ── Section label ── */
   .section-label { font-family: var(--mono); font-size: 10px; letter-spacing: .15em; text-transform: uppercase; color: var(--muted); margin-bottom: 14px; }
 
   @media (max-width: 600px) {
@@ -174,7 +153,6 @@
     .nw-value { font-size: 36px; }
     .account-row { grid-template-columns: 1fr auto; }
     .account-mask { display: none; }
-    .net-worth-block { gap: 20px; }
   }
 </style>
 </head>
@@ -190,33 +168,39 @@
 </header>
 
 <main id="main-content"></main>
-
 <div id="toast"></div>
 
 <script src="https://cdn.plaid.com/link/v2/stable/link-initialize.js"></script>
 <script>
-// ── Config ────────────────────────────────────────────────────────────────
-const CLIENT_ID = '6a32b010fcc30d000d65f4bd';
-const SECRET    = '06045dfd60dbf3c9b53a2f363752e3';
-const PLAID_ENV = 'sandbox';
-const BASE_URL  = `https://${PLAID_ENV}.plaid.com`;
-
-// ── State: two profiles, each with an array of {accessToken, institutionName, accounts[]} ──
+// ── State ─────────────────────────────────────────────────────────────────
 const STATE = {
-  mine:    { label: 'My Accounts',  userId: 'robert-001', items: [] },
-  parents: { label: 'Mom & Dad',    userId: 'parents-001', items: [] },
+  mine:    { label: 'My Accounts', userId: 'robert-001',  items: [] },
+  parents: { label: 'Mom & Dad',   userId: 'parents-001', items: [] },
 };
 let activeProfile = 'mine';
 
-// ── Plaid API ─────────────────────────────────────────────────────────────
-async function plaidPost(endpoint, body) {
-  const res = await fetch(BASE_URL + endpoint, {
+// ── API: call Netlify functions instead of Plaid directly ─────────────────
+async function apiPost(fnName, body) {
+  const res = await fetch(`/.netlify/functions/${fnName}`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ client_id: CLIENT_ID, secret: SECRET, ...body })
+    body: JSON.stringify(body),
   });
   const data = await res.json();
-  if (!res.ok) throw new Error(data.error_message || data.display_message || `Plaid error ${res.status}`);
+  if (!res.ok) throw new Error(data.error || `Error ${res.status}`);
+  return data;
+}
+
+// ── Plaid: call Plaid directly (for balance fetching — no secret needed) ──
+async function plaidPost(endpoint, body) {
+  // Balance fetching still needs credentials — route through a function too
+  const res = await fetch(`/.netlify/functions/get-balances`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body),
+  });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.error || `Error ${res.status}`);
   return data;
 }
 
@@ -228,27 +212,19 @@ function switchProfile(profile) {
   renderMain();
 }
 
-// ── Link: add an institution to active profile ────────────────────────────
+// ── Add institution ───────────────────────────────────────────────────────
 async function addInstitution() {
   const btn = document.getElementById('add-btn');
   btn.disabled = true;
   btn.innerHTML = '<span class="spinner"></span> Connecting…';
 
-  const profile = STATE[activeProfile];
   let linkToken;
   try {
-    const data = await plaidPost('/link/token/create', {
-      user: { client_user_id: profile.userId },
-      client_name: 'Ledger Dashboard',
-      products: ['transactions'],
-      country_codes: ['US'],
-      language: 'en'
-    });
+    const data = await apiPost('create-link-token', { userId: STATE[activeProfile].userId });
     linkToken = data.link_token;
   } catch (e) {
     toast('Could not start Link: ' + e.message, true);
-    resetAddBtn();
-    return;
+    resetAddBtn(); return;
   }
 
   const handler = Plaid.create({
@@ -256,16 +232,12 @@ async function addInstitution() {
     onSuccess: async (publicToken, metadata) => {
       btn.innerHTML = '<span class="spinner"></span> Linking…';
       try {
-        const ex = await plaidPost('/item/public_token/exchange', { public_token: publicToken });
-        const balData = await plaidPost('/accounts/balance/get', { access_token: ex.access_token });
-        const institutionName = metadata.institution?.name || 'Institution';
-        STATE[activeProfile].items.push({
-          accessToken: ex.access_token,
-          institutionName,
-          accounts: balData.accounts
-        });
+        const ex       = await apiPost('exchange-token', { public_token: publicToken });
+        const balData  = await apiPost('get-balances',   { access_token: ex.access_token });
+        const name     = metadata.institution?.name || 'Institution';
+        STATE[activeProfile].items.push({ accessToken: ex.access_token, institutionName: name, accounts: balData.accounts });
         renderMain();
-        toast(`${institutionName} connected`);
+        toast(`${name} connected`);
       } catch (e) {
         toast('Link error: ' + e.message, true);
         resetAddBtn();
@@ -286,22 +258,22 @@ function resetAddBtn() {
   btn.innerHTML = '<span class="plus">+</span> Add Institution';
 }
 
-// ── Remove an institution ─────────────────────────────────────────────────
+// ── Remove institution ────────────────────────────────────────────────────
 function removeInstitution(idx) {
   const item = STATE[activeProfile].items[idx];
-  if (!confirm(`Remove ${item.institutionName}? This cannot be undone (the Item slot stays used on your Trial plan).`)) return;
+  if (!confirm(`Remove ${item.institutionName}?`)) return;
   STATE[activeProfile].items.splice(idx, 1);
   renderMain();
   toast(`${item.institutionName} removed`);
 }
 
-// ── Refresh balances for all items in active profile ──────────────────────
+// ── Refresh all ───────────────────────────────────────────────────────────
 async function refreshAll() {
   const items = STATE[activeProfile].items;
   if (!items.length) return;
-  toast('Refreshing balances…');
+  toast('Refreshing…');
   await Promise.all(items.map(async (item, i) => {
-    const data = await plaidPost('/accounts/balance/get', { access_token: item.accessToken });
+    const data = await apiPost('get-balances', { access_token: item.accessToken });
     STATE[activeProfile].items[i].accounts = data.accounts;
   }));
   renderMain();
@@ -320,17 +292,14 @@ const TYPE_LABELS = { depository: 'Cash & Checking', investment: 'Investments', 
 const TYPE_ORDER  = ['depository', 'investment', 'credit', 'loan', 'other'];
 
 function renderMain() {
-  const profile = STATE[activeProfile];
+  const profile   = STATE[activeProfile];
   const isParents = activeProfile === 'parents';
-  const accentColor = isParents ? 'var(--purple)' : 'var(--accent)';
-  const main = document.getElementById('main-content');
+  const main      = document.getElementById('main-content');
 
   if (profile.items.length === 0) {
     main.innerHTML = `
       <div class="profile-header">
-        <div class="profile-title ${activeProfile}">
-          <strong>${profile.label}</strong>
-        </div>
+        <div class="profile-title ${activeProfile}"><strong>${profile.label}</strong></div>
       </div>
       <div class="empty-state">
         <div class="empty-icon">🏦</div>
@@ -344,25 +313,22 @@ function renderMain() {
     return;
   }
 
-  // Aggregate totals
   let netTotal = 0;
   const typeTotals = {};
   let totalAccounts = 0;
 
   profile.items.forEach(item => {
     item.accounts.forEach(a => {
-      const bal = a.balances.current ?? 0;
+      const bal  = a.balances.current ?? 0;
       const type = a.type;
       totalAccounts++;
-      if (type === 'credit' || type === 'loan') netTotal -= bal;
-      else netTotal += bal;
+      if (type === 'credit' || type === 'loan') netTotal -= bal; else netTotal += bal;
       typeTotals[type] = typeTotals[type] || { amount: 0, count: 0 };
       typeTotals[type].count++;
       typeTotals[type].amount += bal;
     });
   });
 
-  // Type summary HTML
   let typeSummaryHTML = '';
   TYPE_ORDER.forEach(type => {
     if (!typeTotals[type]) return;
@@ -375,21 +341,16 @@ function renderMain() {
       </div>`;
   });
 
-  // Institution groups HTML
   let institutionsHTML = '';
   profile.items.forEach((item, idx) => {
     let rowsHTML = '';
     item.accounts.forEach(a => {
-      const cur = a.balances.current;
-      const avail = a.balances.available;
+      const cur = a.balances.current, avail = a.balances.available;
       rowsHTML += `
         <div class="account-row">
           <div>
             <div class="account-name">${a.name}</div>
-            <div class="account-meta">
-              <span class="pill ${pillClass(a.type)}">${a.type}</span>
-              &nbsp;${a.subtype || ''}
-            </div>
+            <div class="account-meta"><span class="pill ${pillClass(a.type)}">${a.type}</span>&nbsp;${a.subtype || ''}</div>
           </div>
           <div class="account-mask">····${a.mask || '????'}</div>
           <div>
@@ -409,6 +370,7 @@ function renderMain() {
   });
 
   const itemCount = profile.items.length;
+  const accentColor = isParents ? 'var(--purple)' : 'var(--accent)';
   main.innerHTML = `
     <div class="profile-header">
       <div class="profile-title ${activeProfile}">
@@ -416,23 +378,16 @@ function renderMain() {
         <span style="color:var(--muted);font-size:14px;margin-left:10px">${itemCount} institution${itemCount !== 1 ? 's' : ''} · ${totalAccounts} account${totalAccounts !== 1 ? 's' : ''}</span>
       </div>
       <div style="display:flex;gap:8px;align-items:center">
-        <button class="btn-add" onclick="refreshAll()" title="Refresh balances">↻ Refresh</button>
-        <button class="btn-add" id="add-btn" onclick="addInstitution()">
-          <span class="plus">+</span> Add Institution
-        </button>
+        <button class="btn-add" onclick="refreshAll()">↻ Refresh</button>
+        <button class="btn-add" id="add-btn" onclick="addInstitution()"><span class="plus">+</span> Add Institution</button>
       </div>
     </div>
-
     <div class="net-worth-block">
-      <div class="nw-main">
-        <div class="nw-label">Net Balance</div>
-        <div class="nw-value" style="color:${accentColor}">${fmt(netTotal)}</div>
-        <div class="nw-sub">Assets minus credit & loan balances</div>
-      </div>
+      <div class="nw-label">Net Balance</div>
+      <div class="nw-value" style="color:${accentColor}">${fmt(netTotal)}</div>
+      <div class="nw-sub">Assets minus credit &amp; loan balances</div>
     </div>
-
     <div class="type-summary">${typeSummaryHTML}</div>
-
     <div class="section-label">All Accounts</div>
     ${institutionsHTML}`;
 }
@@ -447,7 +402,6 @@ function toast(msg, isError = false) {
   toastTimer = setTimeout(() => { el.className = ''; }, 3000);
 }
 
-// ── Init ──────────────────────────────────────────────────────────────────
 renderMain();
 </script>
 </body>
