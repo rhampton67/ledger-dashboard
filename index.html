@@ -321,7 +321,7 @@ function resetAddBtn() {
 }
 
 // ── Remove institution ────────────────────────────────────────────────────
-function removeInstitution(idx) {
+async function removeInstitution(idx) {
   const item = STATE[activeProfile].items[idx];
   if (!confirm(`Remove ${item.institutionName}?`)) return;
   STATE[activeProfile].items.splice(idx, 1);
@@ -370,7 +370,6 @@ function renderMain() {
         <div class="empty-icon">🏦</div>
         <h2>No accounts connected yet</h2>
         <p>Connect a bank or investment institution to start tracking ${isParents ? "your parents'" : isBecky ? "Becky's" : 'your'} balances.</p>
-        <div class="sandbox-note">Sandbox credentials &nbsp;·&nbsp; Username: <strong>user_good</strong> &nbsp;·&nbsp; Password: <strong>pass_good</strong></div>
         <button class="btn-primary ${isParents ? 'purple' : isBecky ? 'teal' : ''}" id="add-btn" onclick="addInstitution()">
           + Connect Institution
         </button>
