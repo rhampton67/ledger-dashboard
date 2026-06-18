@@ -210,6 +210,60 @@ async function plaidPost(endpoint, body) {
   return data;
 }
 
+// ── Persist tokens to Netlify Blobs ──────────────────────────────────────
+async function saveTokens(profile) {
+  const items = STATE[profile].items.map(item => ({
+    accessToken:     item.accessToken,
+    institutionName: item.institutionName,
+  }));
+  try {
+    await apiPost('save-tokens', { profile, items });
+  } catch (e) {
+    console.warn('Could not save tokens:', e.message);
+  }
+}
+
+async function loadAllProfiles() {
+  const profiles = ['mine', 'parents', 'becky'];
+  showGlobalLoading(true);
+  await Promise.all(profiles.map(async (profile) => {
+    try {
+      const data = await apiPost('load-tokens', { profile });
+      if (!data.items || !data.items.length) return;
+      // Fetch fresh balances for each saved token
+      const hydrated = await Promise.all(data.items.map(async (item) => {
+        try {
+          const balData = await apiPost('get-balances', { access_token: item.accessToken });
+          return { accessToken: item.accessToken, institutionName: item.institutionName, accounts: balData.accounts };
+        } catch (e) {
+          console.warn(`Could not refresh ${item.institutionName}:`, e.message);
+          return null;
+        }
+      }));
+      STATE[profile].items = hydrated.filter(Boolean);
+    } catch (e) {
+      console.warn(`Could not load tokens for ${profile}:`, e.message);
+    }
+  }));
+  showGlobalLoading(false);
+  renderMain();
+}
+
+function showGlobalLoading(show) {
+  let el = document.getElementById('global-loading');
+  if (show) {
+    if (!el) {
+      el = document.createElement('div');
+      el.id = 'global-loading';
+      el.style.cssText = 'position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;justify-content:center;z-index:999;font-family:var(--mono);font-size:13px;color:var(--muted);gap:12px;';
+      el.innerHTML = '<span class="spinner"></span> Loading your accounts…';
+      document.body.appendChild(el);
+    }
+  } else {
+    if (el) el.remove();
+  }
+}
+
 // ── Profile switching ─────────────────────────────────────────────────────
 function switchProfile(profile) {
   activeProfile = profile;
@@ -243,6 +297,7 @@ async function addInstitution() {
         const balData  = await apiPost('get-balances',   { access_token: ex.access_token });
         const name     = metadata.institution?.name || 'Institution';
         STATE[activeProfile].items.push({ accessToken: ex.access_token, institutionName: name, accounts: balData.accounts });
+        await saveTokens(activeProfile);
         renderMain();
         toast(`${name} connected`);
       } catch (e) {
@@ -270,6 +325,7 @@ function removeInstitution(idx) {
   const item = STATE[activeProfile].items[idx];
   if (!confirm(`Remove ${item.institutionName}?`)) return;
   STATE[activeProfile].items.splice(idx, 1);
+  await saveTokens(activeProfile);
   renderMain();
   toast(`${item.institutionName} removed`);
 }
@@ -410,7 +466,8 @@ function toast(msg, isError = false) {
   toastTimer = setTimeout(() => { el.className = ''; }, 3000);
 }
 
-renderMain();
+// ── Init: load saved tokens then render ───────────────────────────────────
+loadAllProfiles();
 </script>
 </body>
 </html>
