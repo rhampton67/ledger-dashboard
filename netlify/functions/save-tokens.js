@@ -1,4 +1,4 @@
-const { getStore } = require('@netlify/blobs');
+const { connectLambda, getStore } = require('@netlify/blobs');
 
 exports.handler = async (event) => {
   const headers = {
@@ -10,6 +10,7 @@ exports.handler = async (event) => {
   if (event.httpMethod === 'OPTIONS') return { statusCode: 200, headers, body: '' };
 
   try {
+    connectLambda(event);
     const { profile, items } = JSON.parse(event.body || '{}');
     if (!profile) throw new Error('profile is required');
     if (!Array.isArray(items)) throw new Error('items must be an array');

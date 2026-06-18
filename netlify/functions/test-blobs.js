@@ -1,4 +1,4 @@
-const { getStore } = require('@netlify/blobs');
+const { connectLambda, getStore } = require('@netlify/blobs');
 
 exports.handler = async (event) => {
   const headers = {
@@ -8,6 +8,7 @@ exports.handler = async (event) => {
   };
 
   try {
+    connectLambda(event);
     const store = getStore('ledger-tokens');
 
     await store.setJSON('__test__', { ok: true, ts: Date.now() });
@@ -17,7 +18,7 @@ exports.handler = async (event) => {
     return {
       statusCode: 200,
       headers,
-      body: JSON.stringify({ success: true, message: 'Blobs is working correctly', readBack: result })
+      body: JSON.stringify({ success: true, message: 'Blobs is working!', readBack: result })
     };
   } catch (e) {
     return {
