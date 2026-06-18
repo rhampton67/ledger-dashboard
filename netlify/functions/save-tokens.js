@@ -14,15 +14,8 @@ exports.handler = async (event) => {
     if (!profile) throw new Error('profile is required');
     if (!Array.isArray(items)) throw new Error('items must be an array');
 
-    const store = getStore({
-      name: 'ledger-tokens',
-      consistency: 'strong',
-      siteID: process.env.SITE_ID,
-      token: process.env.NETLIFY_BLOBS_TOKEN || process.env.TOKEN,
-    });
-
+    const store = getStore('ledger-tokens');
     await store.setJSON(profile, items);
-    console.log(`Saved ${items.length} items for profile: ${profile}`);
 
     return { statusCode: 200, headers, body: JSON.stringify({ ok: true, count: items.length }) };
   } catch (e) {

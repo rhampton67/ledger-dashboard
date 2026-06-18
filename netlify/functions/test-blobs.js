@@ -8,30 +8,16 @@ exports.handler = async (event) => {
   };
 
   try {
-    const store = getStore({
-      name: 'ledger-tokens',
-      consistency: 'strong',
-      siteID: process.env.SITE_ID,
-      token: process.env.NETLIFY_BLOBS_TOKEN || process.env.TOKEN,
-    });
+    const store = getStore('ledger-tokens');
 
-    // Write a test value
     await store.setJSON('__test__', { ok: true, ts: Date.now() });
-
-    // Read it back
     const result = await store.get('__test__', { type: 'json' });
-
-    // Clean up
     await store.delete('__test__');
 
     return {
       statusCode: 200,
       headers,
-      body: JSON.stringify({
-        success: true,
-        message: 'Blobs is working correctly',
-        readBack: result,
-      })
+      body: JSON.stringify({ success: true, message: 'Blobs is working correctly', readBack: result })
     };
   } catch (e) {
     return {
