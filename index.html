@@ -19,6 +19,7 @@
     --red:      #f87171;
     --gold:     #fbbf24;
     --purple:   #a78bfa;
+    --teal:     #2dd4bf;
     --mono:     'IBM Plex Mono', monospace;
     --sans:     'Inter', sans-serif;
   }
@@ -42,6 +43,7 @@
   .profile-tab:hover { border-color: var(--accent); color: var(--accent); }
   .profile-tab.active { background: var(--accent); border-color: var(--accent); color: #fff; }
   .profile-tab.active.parents { background: var(--purple); border-color: var(--purple); }
+  .profile-tab.active.becky   { background: var(--teal);   border-color: var(--teal);   }
 
   #env-badge {
     font-family: var(--mono); font-size: 11px; padding: 4px 10px;
@@ -58,7 +60,8 @@
   .profile-title { font-size: 22px; font-weight: 300; letter-spacing: -.01em; }
   .profile-title strong { font-weight: 600; }
   .profile-title.parents strong { color: var(--purple); }
-  .profile-title.mine strong { color: var(--accent); }
+  .profile-title.becky   strong { color: var(--teal); }
+  .profile-title.mine    strong { color: var(--accent); }
 
   .btn-add {
     display: flex; align-items: center; gap: 8px;
@@ -86,6 +89,7 @@
   .btn-primary:hover { opacity: .85; }
   .btn-primary:disabled { opacity: .4; cursor: not-allowed; }
   .btn-primary.purple { background: var(--purple); }
+  .btn-primary.teal   { background: var(--teal); }
 
   .sandbox-note {
     font-family: var(--mono); font-size: 11px; color: var(--muted);
@@ -162,7 +166,8 @@
   <div class="logo">Ledger <span>/ Family</span></div>
   <div class="profile-tabs">
     <button class="profile-tab active" id="tab-mine" onclick="switchProfile('mine')">My Accounts</button>
-    <button class="profile-tab" id="tab-parents" onclick="switchProfile('parents')">Parents</button>
+    <button class="profile-tab" id="tab-parents" onclick="switchProfile('parents')">M&amp;D</button>
+    <button class="profile-tab" id="tab-becky" onclick="switchProfile('becky')">Becky</button>
   </div>
   <div id="env-badge">sandbox</div>
 </header>
@@ -175,7 +180,8 @@
 // ── State ─────────────────────────────────────────────────────────────────
 const STATE = {
   mine:    { label: 'My Accounts', userId: 'robert-001',  items: [] },
-  parents: { label: 'Mom & Dad',   userId: 'parents-001', items: [] },
+  parents: { label: 'M&D',         userId: 'parents-001', items: [] },
+  becky:   { label: 'Becky',       userId: 'becky-001',   items: [] },
 };
 let activeProfile = 'mine';
 
@@ -209,6 +215,7 @@ function switchProfile(profile) {
   activeProfile = profile;
   document.getElementById('tab-mine').className    = 'profile-tab' + (profile === 'mine'    ? ' active' : '');
   document.getElementById('tab-parents').className = 'profile-tab' + (profile === 'parents' ? ' active parents' : '');
+  document.getElementById('tab-becky').className   = 'profile-tab' + (profile === 'becky'   ? ' active becky' : '');
   renderMain();
 }
 
@@ -294,6 +301,8 @@ const TYPE_ORDER  = ['depository', 'investment', 'credit', 'loan', 'other'];
 function renderMain() {
   const profile   = STATE[activeProfile];
   const isParents = activeProfile === 'parents';
+  const isBecky   = activeProfile === 'becky';
+  const accentColor = isParents ? 'var(--purple)' : isBecky ? 'var(--teal)' : 'var(--accent)';
   const main      = document.getElementById('main-content');
 
   if (profile.items.length === 0) {
@@ -304,9 +313,9 @@ function renderMain() {
       <div class="empty-state">
         <div class="empty-icon">🏦</div>
         <h2>No accounts connected yet</h2>
-        <p>Connect a bank or investment institution to start tracking ${isParents ? "your parents'" : 'your'} balances.</p>
+        <p>Connect a bank or investment institution to start tracking ${isParents ? "your parents'" : isBecky ? "Becky's" : 'your'} balances.</p>
         <div class="sandbox-note">Sandbox credentials &nbsp;·&nbsp; Username: <strong>user_good</strong> &nbsp;·&nbsp; Password: <strong>pass_good</strong></div>
-        <button class="btn-primary ${isParents ? 'purple' : ''}" id="add-btn" onclick="addInstitution()">
+        <button class="btn-primary ${isParents ? 'purple' : isBecky ? 'teal' : ''}" id="add-btn" onclick="addInstitution()">
           + Connect Institution
         </button>
       </div>`;
@@ -370,7 +379,6 @@ function renderMain() {
   });
 
   const itemCount = profile.items.length;
-  const accentColor = isParents ? 'var(--purple)' : 'var(--accent)';
   main.innerHTML = `
     <div class="profile-header">
       <div class="profile-title ${activeProfile}">
